@@ -1,8 +1,13 @@
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.prefs.Preferences;
 
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -20,9 +25,10 @@ public class Game extends JFrame implements Runnable {
     private MouseInput mouseInput;
     private KeyInput keyInput;
     private int monitorWidth, monitorHeight;
-    private boolean onTitle = true; //Will be used to detect whether or not the player is on the title screen
+    private boolean onTitle = true; //Detects whether or not the player is on the title screen
     private Rectangle startButton;
     private Rectangle deckButton;
+    private boolean deckBuilder;
 
     public Preferences preferences = Preferences.userNodeForPackage(Game.class); //user Prefrences
 
@@ -124,10 +130,6 @@ public class Game extends JFrame implements Runnable {
             windowResize();
             keyInput.resetf11();
         }
-
-        if(mouseInput.isLeftClicked()) {
-            System.out.println("Left Click");
-        }
         
         //detect main menu buttons
         if(onTitle && mouseInput.isLeftClicked() && mouseInput.getMouseX() > startButton.x && mouseInput.getMouseX() < startButton.x + startButton.width && mouseInput.getMouseY() > startButton.y && mouseInput.getMouseY() < startButton.y + startButton.height) {
@@ -137,6 +139,38 @@ public class Game extends JFrame implements Runnable {
         if(onTitle && mouseInput.isLeftClicked() && mouseInput.getMouseX() > deckButton.x && mouseInput.getMouseX() < deckButton.x + deckButton.width && mouseInput.getMouseY() > deckButton.y && mouseInput.getMouseY() < deckButton.y + deckButton.height) {
         	System.out.println("Deck Builder");
         	onTitle = false;
+        	deckBuilder = true;
+        }
+        
+        //Deck builder menu
+        if(deckBuilder) {
+        	
+        	//Selecting Cards
+        	int currentRow = 150;
+        	int currentCol = 600;
+        	
+        	for(CardCatalog card : CardCatalog.values()) {
+        		try {
+					BufferedImage image = ImageIO.read(new File("Images/" + card.name() + ".png"));
+					
+					if(mouseInput.isLeftClicked() && mouseInput.getMouseX() > currentCol && mouseInput.getMouseX() < currentCol + image.getWidth() && mouseInput.getMouseY() > currentRow && mouseInput.getMouseY() < currentRow + image.getHeight()) {
+						System.out.println(card.name() + " selected");
+					}
+					
+					currentCol += image.getWidth() + 40;
+					if(currentCol >= monitorWidth - 600) {
+						currentRow += image.getHeight() + 40;
+						currentCol = 600;
+						if(currentRow >= monitorHeight - 200) {
+							break; //Add scrolling
+						}
+					}
+					
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+        	}
         }
     }
 
@@ -174,8 +208,34 @@ public class Game extends JFrame implements Runnable {
                     	g.setColor(Color.WHITE);
                     	g.drawString("Select Deck", deckButton.x + 20, deckButton.y + 35);
                     	
-                    	//Now add detection of mouse clicks in this area
-                    	
+                    }
+                    
+                    if(deckBuilder) {
+                    	int currentRow = 150;
+                    	int currentCol = 600;
+                    	g.setFont(new Font("Serif", Font.BOLD, 80));
+                    	g.setColor(Color.WHITE);
+                    	g.drawString("Select Cards:", 800, 100); //Rearrange this to be in the center
+                    	g.drawString("Current Deck:", 0, 100);
+                    	for(CardCatalog card : CardCatalog.values()) {
+                    		try {
+								BufferedImage image = ImageIO.read(new File("Images/" + card.name() + ".png"));
+								
+								g.drawImage(image, currentCol, currentRow, image.getWidth(), image.getHeight(), canvas);
+								currentCol += image.getWidth() + 40;
+								if(currentCol >= monitorWidth - 600) {
+									currentRow += image.getHeight() + 40;
+									currentCol = 600;
+									if(currentRow >= monitorHeight - 200) {
+										break; //Add scrolling
+									}
+								}
+								
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+
+                    	}
                     }
                 } finally {
                     //get rid of graphics to get new frame
@@ -213,7 +273,7 @@ public class Game extends JFrame implements Runnable {
     }
 
     public static void main(String[] args) {
-        Game game = new Game();
+    	Game game = new Game();
         game.start();
     }
 }
