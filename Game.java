@@ -1,8 +1,11 @@
+
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.util.prefs.Preferences;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 
 /* figure out how to rearrange size of windows && canvas
@@ -17,6 +20,8 @@ public class Game extends JFrame implements Runnable {
     private MouseInput mouseInput;
     private KeyInput keyInput;
     private int monitorWidth, monitorHeight;
+    private boolean onTitle = true; //Will be used to detect whether or not the player is on the title screen
+    private Rectangle startButton;
 
     public Preferences preferences = Preferences.userNodeForPackage(Game.class); //user Prefrences
 
@@ -29,7 +34,8 @@ public class Game extends JFrame implements Runnable {
 
         monitorHeight = gd.getDisplayMode().getHeight();
         monitorWidth = gd.getDisplayMode().getWidth();
-
+        startButton = new Rectangle(monitorWidth / 2 - 300, monitorHeight / 2 - 75, 300, 75); //For Title Screen
+        
         //Initialize Window Border
         setTitle("Project Duel");
         windowResize();
@@ -134,6 +140,24 @@ public class Game extends JFrame implements Runnable {
                     g.drawString("Mouse Position: (" + mouseInput.getMouseX() + ", " + mouseInput.getMouseY() + ")", 20, 20);
                     //FPS counter
                     g.drawString("FPS: " + frames, 20, 40);
+                    
+                    //Title Screen + Main Menu
+                    if(onTitle) {
+                    	//Title Text
+                    	g.setFont(new Font("Serif", Font.BOLD, 80));
+                    	g.setColor(Color.WHITE);
+                    	g.drawString("Project Duel", monitorWidth / 4 + 100, monitorHeight / 4); //Rearrange this to be in the center
+                    	
+                    	//Add a Start Button
+                    	g.setFont(new Font("Arial", Font.BOLD, 48));
+                    	g.setColor(Color.LIGHT_GRAY);
+                    	g.fillRect(startButton.x, startButton.y, startButton.width, startButton.height);
+                    	g.setColor(Color.WHITE);
+                    	g.drawString("Start Game", startButton.x + 20, startButton.y + 35);
+                    	
+                    	//Now add detection of mouse clicks in this area
+                    	
+                    }
                 } finally {
                     //get rid of graphics to get new frame
                     g.dispose();
