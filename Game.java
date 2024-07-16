@@ -22,6 +22,7 @@ public class Game extends JFrame implements Runnable {
     private int monitorWidth, monitorHeight;
     private boolean onTitle = true; //Will be used to detect whether or not the player is on the title screen
     private Rectangle startButton;
+    private Rectangle deckButton;
 
     public Preferences preferences = Preferences.userNodeForPackage(Game.class); //user Prefrences
 
@@ -35,6 +36,7 @@ public class Game extends JFrame implements Runnable {
         monitorHeight = gd.getDisplayMode().getHeight();
         monitorWidth = gd.getDisplayMode().getWidth();
         startButton = new Rectangle(monitorWidth / 2 - 300, monitorHeight / 2 - 75, 300, 75); //For Title Screen
+        deckButton = new Rectangle(monitorWidth / 2 - 300, monitorHeight / 2 + 75, 300, 75);
         
         //Initialize Window Border
         setTitle("Project Duel");
@@ -126,6 +128,16 @@ public class Game extends JFrame implements Runnable {
         if(mouseInput.isLeftClicked()) {
             System.out.println("Left Click");
         }
+        
+        //detect main menu buttons
+        if(onTitle && mouseInput.isLeftClicked() && mouseInput.getMouseX() > startButton.x && mouseInput.getMouseX() < startButton.x + startButton.width && mouseInput.getMouseY() > startButton.y && mouseInput.getMouseY() < startButton.y + startButton.height) {
+        	System.out.println("Pressed Start");
+        	onTitle = false;
+        }
+        if(onTitle && mouseInput.isLeftClicked() && mouseInput.getMouseX() > deckButton.x && mouseInput.getMouseX() < deckButton.x + deckButton.width && mouseInput.getMouseY() > deckButton.y && mouseInput.getMouseY() < deckButton.y + deckButton.height) {
+        	System.out.println("Deck Builder");
+        	onTitle = false;
+        }
     }
 
     //Rendering graphics
@@ -154,6 +166,13 @@ public class Game extends JFrame implements Runnable {
                     	g.fillRect(startButton.x, startButton.y, startButton.width, startButton.height);
                     	g.setColor(Color.WHITE);
                     	g.drawString("Start Game", startButton.x + 20, startButton.y + 35);
+                    	
+                    	//Add a Select Deck Button
+                    	g.setFont(new Font("Arial", Font.BOLD, 48));
+                    	g.setColor(Color.LIGHT_GRAY);
+                    	g.fillRect(deckButton.x, deckButton.y, deckButton.width, deckButton.height);
+                    	g.setColor(Color.WHITE);
+                    	g.drawString("Select Deck", deckButton.x + 20, deckButton.y + 35);
                     	
                     	//Now add detection of mouse clicks in this area
                     	
