@@ -1,5 +1,7 @@
 
 import java.awt.*;
+import java.util.*;
+
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -29,6 +31,10 @@ public class Game extends JFrame implements Runnable {
     private Rectangle startButton;
     private Rectangle deckButton;
     private boolean deckBuilder;
+    private CardCatalog selectedCard;
+    private CardCatalog[][] decks = new CardCatalog[40][40];
+    private CardCatalog[] currentDeck = new CardCatalog[40];
+    private int selectedCardIndex = 0;
 
     public Preferences preferences = Preferences.userNodeForPackage(Game.class); //user Prefrences
 
@@ -151,10 +157,18 @@ public class Game extends JFrame implements Runnable {
         	
         	for(CardCatalog card : CardCatalog.values()) {
         		try {
-					BufferedImage image = ImageIO.read(new File("Images/" + card.name() + ".png"));
+					BufferedImage image = ImageIO.read(card.image);
 					
 					if(mouseInput.isLeftClicked() && mouseInput.getMouseX() > currentCol && mouseInput.getMouseX() < currentCol + image.getWidth() && mouseInput.getMouseY() > currentRow && mouseInput.getMouseY() < currentRow + image.getHeight()) {
-						System.out.println(card.name() + " selected");
+						selectedCard = card;
+						System.out.println("Selected card: " + card.name());
+					}
+					else if(selectedCard == card && !mouseInput.isLeftClicked() && mouseInput.getMouseX() > currentCol && mouseInput.getMouseX() < currentCol + image.getWidth() && mouseInput.getMouseY() > currentRow && mouseInput.getMouseY() < currentRow + image.getHeight()) {
+						currentDeck[selectedCardIndex] = card;
+						selectedCardIndex++;
+						if(selectedCardIndex == 40) {
+							selectedCardIndex = 0;
+						}
 					}
 					
 					currentCol += image.getWidth() + 40;
@@ -170,6 +184,10 @@ public class Game extends JFrame implements Runnable {
 					e.printStackTrace();
 				}
 
+        	}
+        	
+        	if(!mouseInput.isLeftClicked()) {
+        		selectedCard = null;
         	}
         }
     }
@@ -219,7 +237,7 @@ public class Game extends JFrame implements Runnable {
                     	g.drawString("Current Deck:", 0, 100);
                     	for(CardCatalog card : CardCatalog.values()) {
                     		try {
-								BufferedImage image = ImageIO.read(new File("Images/" + card.name() + ".png"));
+								BufferedImage image = ImageIO.read(card.image);
 								
 								g.drawImage(image, currentCol, currentRow, image.getWidth(), image.getHeight(), canvas);
 								currentCol += image.getWidth() + 40;
@@ -235,6 +253,31 @@ public class Game extends JFrame implements Runnable {
 								e.printStackTrace();
 							}
 
+                    	}
+                    	
+                    	currentRow = 150;
+                    	currentCol = 40;
+                    	
+                    	for(CardCatalog card : currentDeck) {
+                    		try {
+								if(card != null) {
+									BufferedImage image = ImageIO.read(card.image);
+								
+									g.drawImage(image, currentCol, currentRow, image.getWidth(), image.getHeight(), canvas);
+									currentCol += image.getWidth() + 40;
+									if(currentCol >= 450) {
+										currentRow += image.getHeight() + 40;
+										currentCol = 40;
+										if(currentRow >= monitorHeight - 200) {
+											break; //Add scrolling
+										}
+									}
+								}
+                    			
+								
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
                     	}
                     }
                 } finally {
