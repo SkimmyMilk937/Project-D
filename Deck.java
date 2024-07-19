@@ -1,13 +1,66 @@
+import org.w3c.dom.Element;
+import java.util.ArrayList;
 
 public class Deck extends PreGameDeck {
     public Card[] deck = new Card[40];
 
-    public Deck(){
+    private final Element fighterElement;
+    private final Element supportElement;
+    private final Element spellElement;
+    private final Element defenderElement;
+
+
+    private ArrayList<String> fighterList;
+    private ArrayList<Element> fighterTextElements;
+
+    private XMLWriter writer;
+    
+    public Deck(String deckName){
+        writer = new XMLWriter(deckName, true);
+        writer.createNewRootElement("cards");
+  
+        fighterElement = writer.createNewChildElement(writer.getRootElement(), "fighter");
+        supportElement = writer.createNewChildElement(writer.getRootElement(), "support");
+        spellElement = writer.createNewChildElement(writer.getRootElement(), "spell");
+        defenderElement = writer.createNewChildElement(writer.getRootElement(), "defender");
+
+        fighterTextElements = new ArrayList<Element>();
+
+        updateLists();
+      }
+
+      public void addCard(CardCatalog card){
+
+        String cardType = card.getType();
+        Element element; 
+
+        if(cardType.equals("fighter")){   
+          if(fighterList.contains(card.getName())){
+            System.out.println("Does contain");
+            for(Element x : fighterTextElements){
+                if(x.getNodeName().equals(card.getName())){
+                    writer.setElementAttribute(x, "count", String.valueOf(Integer.parseInt(writer.getAtribute(x, "count")) + 1));
+                }
+            }
+
+          }
+          else{
+            element = writer.createNewChildElement(fighterElement, card.getName());
+            writer.setElementAttribute(element, "count", "1");
+            //element = writer.createTextElement(fighterElement, card.getName(), "1");
+            fighterTextElements.add(element);
+          }
+        }
+        updateLists();
+      }
+
+      public void updateLists(){
+          fighterList = writer.getChildNodesString(fighterElement);
+      }
 
     }
 
 
-}
 
 /* 
 import java.util.*;

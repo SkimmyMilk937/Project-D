@@ -9,7 +9,8 @@ import java.io.File;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder; 
-import javax.xml.parsers.DocumentBuilderFactory; 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer; 
 import javax.xml.transform.TransformerFactory; 
 import javax.xml.transform.dom.DOMSource; 
@@ -102,17 +103,19 @@ public class XMLWriter {
         
         ArrayList<String> nodes = new ArrayList<String>();
         NodeList nodeList = document.getElementsByTagName(element.getNodeName());
-        
         for(int i = 0; i < nodeList.getLength(); i++){
             nodes.add(nodeList.item(i).toString());
         }
-
-        commitChanges();
         return nodes;
     }
 
-    public String getChildNodes(Element element){
-        return element.getChildNodes().toString();
+    public ArrayList<String> getChildNodesString(Element element){
+        ArrayList<String> nodes = new ArrayList<String>();
+        NodeList nodeList = element.getChildNodes();
+        for(int i = 0; i < nodeList.getLength(); i++){
+            nodes.add(nodeList.item(i).getNodeName());
+        }
+        return nodes;
     }
     
     public String getNodeContent(Element element){
@@ -125,19 +128,49 @@ public class XMLWriter {
     }
     
     public void changeNodeText(Element textElement, String newText){
-        textElement.setNodeValue(newText);
+        System.out.println("this point" + newText);
+        textElement.setAttribute("howMany", newText);
+        System.out.println("next point" + this.getNodeContent(textElement));
         commitChanges();
+    }
+
+    public void setElementAttribute(Element element, String attributeName, String attributeValue){
+        element.setAttribute(attributeName, attributeValue);
+        commitChanges();
+    }
+
+    public String getAtribute(Element element, String attribute){
+        return element.getAttribute(attribute);
     }
     
     public Element getRootElement(){
         return document.getDocumentElement();
     }
     
+    // public void getElement(){
+    //     System.out.println("Root element: " + document.getDocumentElement().getNodeName());
+    //     NodeList nodeList = document.getElementsByTagName("parameter");
+    //     for (int temp = 0; temp < nodeList.getLength(); temp++) {
+    //         org.w3c.dom.Node node = nodeList.item(temp);
+    //         System.out.println("\nCurrent element: " + node.getNodeName());
+    //         if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+    //             Element element = (Element) node;
+    //             System.out.println("Name: " + element.getElementsByTagName("name").item(0).getTextContent());
+    //             System.out.println("Key Value: " + element.getElementsByTagName("keyvalue").item(0).getTextContent());
+    //         }
+    //     }
+    // }
+
+
+
+
         // Write to XML file 
     public void commitChanges(){
         try{
             TransformerFactory transformerFactory = TransformerFactory.newInstance(); 
             Transformer transformer = transformerFactory.newTransformer(); 
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.STANDALONE, "no");
             DOMSource source = new DOMSource(document); 
   
             // Specify your local file path 

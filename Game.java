@@ -37,7 +37,7 @@ public class Game extends JFrame implements Runnable {
     private CardCatalog[][] decks = new CardCatalog[40][40];
     private CardCatalog[] currentDeck = new CardCatalog[40];
     private int selectedCardIndex = 0;
-
+    Deck deck = new Deck("myDeck"); // temporary deck testing object
     public Preferences preferences = Preferences.userNodeForPackage(Game.class); //user Prefrences
 
     GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
@@ -167,6 +167,8 @@ public class Game extends JFrame implements Runnable {
 					}
 					else if(selectedCard == card && !mouseInput.isLeftClicked() && mouseInput.getMouseX() > currentCol && mouseInput.getMouseX() < currentCol + image.getWidth() && mouseInput.getMouseY() > currentRow && mouseInput.getMouseY() < currentRow + image.getHeight()) {
 						currentDeck[selectedCardIndex] = card;
+                        deck.addCard(card); //temporary placemnt of add method for deck contrcution
+                        
 						selectedCardIndex++;
 						if(selectedCardIndex == 40) {
 							selectedCardIndex = 0;
