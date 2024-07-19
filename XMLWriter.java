@@ -32,23 +32,38 @@ public class XMLWriter {
     /**constuctor for writer object, 
      * @parm- file name
      */
-    public XMLWriter(String fileName){
+    public XMLWriter(String fileName, Boolean newFile){
         this.filepath = System.getProperty("user.dir") + "/XML/" + fileName;
         this.xmlFile = new File(this.filepath);
-        buildDocReader();
+        buildDocReader(newFile);
+        //createNewRootElement(rootElement);
+        commitChanges();
     }
 
+
     //initilize fields for document parsing and handling = assist the constructor
-    private void buildDocReader(){
-        try{
-            factory = DocumentBuilderFactory.newInstance(); 
-            builder = factory.newDocumentBuilder();
-            document = builder.parse(xmlFile); // Parse the XML file
+    private void buildDocReader(Boolean newFile){
+        factory = DocumentBuilderFactory.newInstance(); 
+
+        if(newFile){
+            try{
+                builder = factory.newDocumentBuilder();
+                document = builder.newDocument();
+            } 
+            catch(Exception e){
+            }  
         }
-        catch(Exception e){
-            System.out.println("INITILIZE DOC READER ERROR: POTENTIAL FILE PATH MISSMATCH(REFRENCE FILE) LN40 XMLwriter" + e);
-        }
+        else{     
+            try{
+                builder = factory.newDocumentBuilder();
+                document = builder.parse(xmlFile); // Parse the XML file
+            }
+            catch(Exception e){
+                System.out.println("INITILIZE DOC READER ERROR: POTENTIAL FILE PATH MISSMATCH(REFRENCE FILE) LN40 XMLwriter" + e);
+            }
+        }   
     }
+
 
     /**create a new root element, only useful when creating a new file or file is empty - see xml formating 
      * @return root element created
@@ -56,6 +71,7 @@ public class XMLWriter {
     public Element createNewRootElement(String rootElementName){
         Element root = document.createElement(rootElementName);
         document.appendChild(root);
+        commitChanges();
         return root;
     }
     /**creates a child element of a any parent
@@ -66,6 +82,7 @@ public class XMLWriter {
     public Element createNewChildElement(Element parent, String elementName){
         Element child = document.createElement(elementName);
         parent.appendChild(child);
+        commitChanges();
         return child;
     }
     /**creates a text subelement 
@@ -77,7 +94,7 @@ public class XMLWriter {
     public Element createTextElement(Element parent, String elementName, String text){
         Element textElement = createNewChildElement(parent, elementName);
         textElement.appendChild(document.createTextNode(text));
-
+        commitChanges();
         return textElement;
     }
     
@@ -90,6 +107,7 @@ public class XMLWriter {
             nodes.add(nodeList.item(i).toString());
         }
 
+        commitChanges();
         return nodes;
     }
 
@@ -103,15 +121,18 @@ public class XMLWriter {
 
     public void removeTextElement(Element parentElement, String elementName){
         parentElement.removeAttribute(elementName);
+        commitChanges();
     }
     
     public void changeNodeText(Element textElement, String newText){
         textElement.setNodeValue(newText);
+        commitChanges();
     }
     
     public Element getRootElement(){
         return document.getDocumentElement();
     }
+    
         // Write to XML file 
     public void commitChanges(){
         try{
@@ -120,7 +141,7 @@ public class XMLWriter {
             DOMSource source = new DOMSource(document); 
   
             // Specify your local file path 
-            StreamResult result = new StreamResult(filepath);
+            StreamResult result = new StreamResult(xmlFile);
             transformer.transform(source, result); 
         }
         catch(Exception e){

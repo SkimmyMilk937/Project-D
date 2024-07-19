@@ -7,7 +7,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document; 
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node; 
-import java.io.File; 
+import java.io.File;
+import org.w3c.dom.Element;
   
 public class XMLReader { 
     
@@ -42,7 +43,19 @@ public class XMLReader {
         }
     }
     
-
+//     public void read(){
+//         System.out.println("Root element: " + document.getDocumentElement().getNodeName());
+//         NodeList nodeList = document.getElementsByTagName("parameter");
+//         for (int temp = 0; temp < nodeList.getLength(); temp++) {
+//             org.w3c.dom.Node node = nodeList.item(temp);
+//             System.out.println("\nCurrent element: " + node.getNodeName());
+//             if (node.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE) {
+//                 Element element = (Element) node;
+//                 System.out.println("Name: " + element.getElementsByTagName("name").item(0).getTextContent());
+//                 System.out.println("Key Value: " + element.getElementsByTagName("keyvalue").item(0).getTextContent());
+//     }
+// }
+//     }
     // Access elements by tag name 
     public String getContentsOfElement(String element){
         String found = "";
