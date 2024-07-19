@@ -1,7 +1,10 @@
 import java.util.ArrayList;
 
+
 public class PreGameDeck {
-    private ArrayList<Card> deck = new ArrayList<Card>();
+
+
+   private ArrayList<Card> deck = new ArrayList<Card>();
 
     public PreGameDeck(){
         
@@ -17,5 +20,13 @@ public class PreGameDeck {
 
     public ArrayList<Card> getMasterDeck(){
         return deck;
+    }
+
+    public void createNew(String name){
+
+    }
+
+    public void changeName(String x){
+
     }
 }

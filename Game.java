@@ -1,7 +1,7 @@
 
 import java.awt.*;
 import java.util.*;
-
+import org.w3c.dom.Element;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -9,10 +9,12 @@ import java.io.IOException;
 import java.util.prefs.Preferences;
 
 import javax.imageio.ImageIO;
+import javax.sql.rowset.spi.XmlWriter;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
 
 
 /* figure out how to rearrange size of windows && canvas
