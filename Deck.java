@@ -10,14 +10,14 @@ public class Deck extends PreGameDeck {
     private final Element defenderElement;
 
 
-    private ArrayList<String> fighterList;
-    private ArrayList<Element> fighterTextElements;
+    private ArrayList<String> fighterList; //list of fighters in the xml
+    private ArrayList<Element> fighterTextElements; //list of the elment texts in the xml
 
     private XMLWriter writer;
     
     public Deck(String deckName){
         writer = new XMLWriter(deckName, true);
-        writer.createNewRootElement("cards");
+        writer.createNewRootElement(deckName);
   
         fighterElement = writer.createNewChildElement(writer.getRootElement(), "fighter");
         supportElement = writer.createNewChildElement(writer.getRootElement(), "support");
@@ -34,7 +34,7 @@ public class Deck extends PreGameDeck {
         String cardType = card.getType();
         Element element; 
 
-        if(cardType.equals("fighter")){   
+        if(cardType.equals("fighter")){   //expand for other card types
           if(fighterList.contains(card.getName())){
             System.out.println("Does contain");
             for(Element x : fighterTextElements){
@@ -51,8 +51,35 @@ public class Deck extends PreGameDeck {
             fighterTextElements.add(element);
           }
         }
+        
         updateLists();
       }
+
+      public void removeCard(CardCatalog card){ //hopefully this work? Im not testing it :) //expand for other card types
+        String cardType = card.getType();
+        if(cardType.equals("fighter")){   
+          if(fighterList.contains(card.getName())){
+            System.out.println("Does contain");
+            for(Element x : fighterTextElements){
+                if(x.getNodeName().equals(card.getName())){
+                  if(Integer.valueOf(writer.getAtribute(x, "count")) > 1 )
+                    writer.setElementAttribute(x, "count", String.valueOf(Integer.parseInt(writer.getAtribute(x, "count")) - 1));
+                  else
+                    writer.removeTextElement(fighterElement, card.getName());
+                }
+                
+            }
+          } 
+        }
+      }
+
+
+
+      /** 
+      public boolean renameDeck(String newName){
+        return writer.renameFile(newName + ".xml");
+      }
+      */
 
       public void updateLists(){
           fighterList = writer.getChildNodesString(fighterElement);

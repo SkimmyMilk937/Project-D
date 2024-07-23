@@ -168,7 +168,8 @@ public class Game extends JFrame implements Runnable {
 					else if(selectedCard == card && !mouseInput.isLeftClicked() && mouseInput.getMouseX() > currentCol && mouseInput.getMouseX() < currentCol + image.getWidth() && mouseInput.getMouseY() > currentRow && mouseInput.getMouseY() < currentRow + image.getHeight()) {
 						currentDeck[selectedCardIndex] = card;
                         deck.addCard(card); //temporary placemnt of add method for deck contrcution
-                        
+                        //System.out.println(deck.renameDeck(card.getName()));
+
 						selectedCardIndex++;
 						if(selectedCardIndex == 40) {
 							selectedCardIndex = 0;

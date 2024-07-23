@@ -146,6 +146,18 @@ public class XMLWriter {
     public Element getRootElement(){
         return document.getDocumentElement();
     }
+    /*
+    public Boolean renameFile(String newName){
+        boolean state = xmlFile.renameTo(new File(newName));
+        if(state)
+            this.filepath = System.getProperty("user.dir") + "/XML/" + newName;
+            this.xmlFile = new File(this.filepath);
+            buildDocReader(false);
+        commitChanges();
+        return state;
+        
+    }   
+    */
     
     // public void getElement(){
     //     System.out.println("Root element: " + document.getDocumentElement().getNodeName());
